@@ -25,31 +25,40 @@
 	// Do any additional setup after loading the view, typically from a nib.
     
     //=================Working with cookies=======================
-    //Request URL: https://disqus.com/profile/login/?next=https://disqus.com/
     
     
     NSMutableDictionary *userData=[[NSMutableDictionary alloc]init];
     [userData setObject:@"pujagallery_innofied" forKey:@"username"];
-    [userData setObject:@"innofied#123" forKey:@"password"];
+    [userData setObject:@"yourPasswordForDisqus" forKey:@"password"];
     
     
-    __block NetworkRequestHandler *logInRequest=[[NetworkRequestHandler alloc]initWithBaseURLString:@"https://disqus.com" objectPathInURL:@"/profile/login/?next=https://disqus.com/" dataDictionaryToPost:userData];
-    //---------------fetching cookies data for anonymous  user from disqus-------------
+    __block NetworkRequestHandler *logInRequest=[[NetworkRequestHandler alloc]initWithBaseURLString:@"https://disqus.com"
+                                                                                    objectPathInURL:@"/profile/login/?next=https://disqus.com/"
+  
+                                                 
+                                                                               dataDictionaryToPost:userData];
+    //---------------saivng the cookies data coing from disqus  after login-------------
     
-    [logInRequest setCompletionHandler:^{
+    [logInRequest setCompletionHandler:
+                           ^{
         
-       // NSLog(@"%@",[logInRequest httpResponseHeaders]);
-        //NSLog(@"\nCookies=%@",[logInRequest.httpResponseHeaders objectForKey:@"cookie"]);
+
         
-        NSLog(@"Cookies from server after login=%@",[[NSHTTPCookieStorage sharedHTTPCookieStorage] cookiesForURL:[NSURL URLWithString:@"https://disqus.com"]]);
+            NSLog(@"Cookies from server after login=%@",[[NSHTTPCookieStorage sharedHTTPCookieStorage]
+                                                         cookiesForURL:[NSURL URLWithString:@"https://disqus.com"]]);
         
     }];
     
+    //-----------starts downloading  the cookies data-------
     [logInRequest startDownload];
     
     
     
-    /*NSMutableDictionary *postData=[[NSMutableDictionary alloc]init];
+    
+    
+    //----------This code will upload a comment to the Disqus forum for against a particular thread-------------
+    
+    NSMutableDictionary *postData=[[NSMutableDictionary alloc]init];
     [postData setObject:@"Post for testing." forKey:@"message"];
     [postData setObject:@"1788564545" forKey:@"thread"];
     [postData setObject:@"E8Uh5l5fHZ6gD8U3KycjAIAk46f68Zw7C6eW8WSjZvCLXebZ7p0r1yrYDrLilk2F" forKey:@"api_key"];
@@ -57,7 +66,9 @@
     [postData setObject:@"Sauvik " forKey:@"author_name"];
     
     
-    NetworkRequestHandler *commentUploader=[[NetworkRequestHandler alloc]initWithBaseURLString:@"https://disqus.com" objectPathInURL:@"/api/3.0/posts/create.json" dataDictionaryToPost:postData];
+    NetworkRequestHandler *commentUploader=[[NetworkRequestHandler alloc]initWithBaseURLString:@"https://disqus.com"
+                                                                               objectPathInURL:@"/api/3.0/posts/create.json"
+                                                                          dataDictionaryToPost:postData];
     
     [commentUploader setCompletionHandler:^{
         
@@ -70,7 +81,7 @@
     }];
      
     [commentUploader startDownload];
-     */
+     
     
     
     
@@ -89,7 +100,7 @@
     NSHTTPURLResponse *HTTPResponse = (NSHTTPURLResponse *)response;
     allcookies = [HTTPResponse allHeaderFields];
     NSLog(@"all cookies=\n%@",allcookies);
-    //NSString *cookie = [fields valueForKey:@"Set-Cookie"]; // It is your cookie
+
 }
 
 
@@ -97,9 +108,11 @@
 {
     
     
-   // NSString *objectPath=[NSString stringWithFormat:@"/api/3.0/threads/listPosts.json?thread=%@&forum=pujagallery&api_key=E8Uh5l5fHZ6gD8U3KycjAIAk46f68Zw7C6eW8WSjZvCLXebZ7p0r1yrYDrLilk2F",localThread];
     
-    NetworkRequestHandler *commentJSONDonloader=[[NetworkRequestHandler alloc ]initWithBaseURLString:@"https://disqus.com/api/3.0/threads/listPosts.json?thread=1788564545&forum=pujagallery&api_key=gsBxzqAo49wwEaklWSNGtcAILpnbm3D7oWpBRPmMBAv0bkcQjYO8Cn7EQUDl6T07" objectPathInURL:nil dataDictionaryToPost:nil];
+    NetworkRequestHandler *commentJSONDonloader=[[NetworkRequestHandler alloc ]
+                                                 initWithBaseURLString:@"https://disqus.com/api/3.0/threads/listPosts.json?thread=1788564545&forum=pujagallery&api_key=gsBxzqAo49wwEaklWSNGtcAILpnbm3D7oWpBRPmMBAv0bkcQjYO8Cn7EQUDl6T07"
+                                                 objectPathInURL:nil
+                                                 dataDictionaryToPost:nil];
     
     [commentJSONDonloader setCompletionHandler:^{
        
@@ -157,7 +170,9 @@
            
                 
                 
-                NetworkRequestHandler *imageDownloader=[[NetworkRequestHandler alloc]initWithBaseURLString:authorImageURL objectPathInURL:nil dataDictionaryToPost:nil];
+                NetworkRequestHandler *imageDownloader=[[NetworkRequestHandler alloc]initWithBaseURLString:authorImageURL
+                                                                                           objectPathInURL:nil
+                                                                                      dataDictionaryToPost:nil];
                 [imageDownloader setCompletionHandler:^{
                    
                     self.imageView.image=[UIImage imageWithData:imageDownloader.responseData];
